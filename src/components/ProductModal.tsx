@@ -70,15 +70,20 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
   const handleAddToCart = () => {
     if (!selectedSize) { setSizeError(true); return }
     setSizeError(false)
-    addItem({ id: product.id, name: product.name, price: product.price, image: product.images[0], size: selectedSize, quantity })
+    // Add item once, then call addItem again for each additional quantity
+    for (let i = 0; i < quantity; i++) {
+      addItem({ id: product.id, name: product.name, price: product.price, image: product.images[0], size: selectedSize })
+    }
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }
 
   const handleBuyNow = () => {
     if (!selectedSize) { setSizeError(true); return }
-    addItem({ id: product.id, name: product.name, price: product.price, image: product.images[0], size: selectedSize, quantity })
-    // redirect to checkout if desired
+    setSizeError(false)
+    for (let i = 0; i < quantity; i++) {
+      addItem({ id: product.id, name: product.name, price: product.price, image: product.images[0], size: selectedSize })
+    }
   }
 
   return (
