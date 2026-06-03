@@ -19,12 +19,13 @@ export default function ArtisanBanner() {
             <span style={{ display: 'inline-block', width: 28, height: 1, background: 'rgba(201,169,110,0.4)' }} />
             SS 2026 — The Everyday Collection
           </p>
-          <h2 style={{ fontFamily: 'var(--display)', fontSize: 'clamp(36px,6.5vw,88px)', fontWeight: 400, lineHeight: 1.05, letterSpacing: '-0.02em', color: 'rgba(245,238,218,0.97)', marginBottom: 'clamp(14px,2vh,28px)', textShadow: '0 4px 40px rgba(0,0,0,0.4)' }}>
-            Thoughtful<br />Choices,<br />
-            <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'rgba(228,215,188,0.88)' }}>Shaped by</em><br />hand.
+          {/* NEW HEADING */}
+          <h2 style={{ fontFamily: 'var(--display)', fontSize: 'clamp(32px,6vw,72px)', fontWeight: 400, lineHeight: 1.2, letterSpacing: '-0.02em', color: 'rgba(245,238,218,0.97)', marginBottom: 'clamp(14px,2vh,28px)', textShadow: '0 4px 40px rgba(0,0,0,0.4)', maxWidth: 800 }}>
+            Everyday casuals rooted in comfort, craft, and culture
           </h2>
-          <p style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(13px,1.4vw,16px)', color: 'rgba(210,195,168,0.6)', lineHeight: 1.75, fontStyle: 'italic', marginBottom: 'clamp(20px,3vh,44px)', maxWidth: 440 }}>
-            Cotton fabric, floral motifs, everyday Telugu life. Not to invent something new — simply to make thoughtful choices.
+          {/* NEW BODY COPY */}
+          <p style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(13px,1.4vw,16px)', color: 'rgba(210,195,168,0.75)', lineHeight: 1.7, fontStyle: 'italic', marginBottom: 'clamp(20px,3vh,44px)', maxWidth: 520 }}>
+            Thoughtfully made handloom cotton casuals for slow mornings, familiar routines, busy afternoons, and everything in between.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
             <Link href="#catalog" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: 'clamp(10px,1.5vh,14px) clamp(18px,2.5vw,28px)', background: 'var(--terra)', color: 'rgba(245,238,218,0.97)', fontFamily: 'var(--sans)', fontSize: 11, letterSpacing: 3, textTransform: 'uppercase', fontWeight: 500, textDecoration: 'none', borderRadius: 1, boxShadow: '0 8px 32px rgba(139,58,30,0.45)' }}>

@@ -1,47 +1,62 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 
 const footerLinks = {
-  Pages: ['Shop', 'Our Story', 'Journal', 'Collections', 'Contact'],
+  Pages: ['Shop', 'Our Story', 'Journal', 'Collections', 'Contact', 'Admin'],
   Policies: ['Returns & Exchanges', 'Terms & Conditions', 'Privacy Policy', "Where's My Order?"],
   Contact: ['MSME#, Hyderabad India', '@sesharaofficial', 'hello@seshara.in'],
 }
 
 export default function Footer() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <footer style={{ background: 'var(--brown)', color: 'rgba(245,240,232,0.75)' }}>
       {/* Top tagline */}
       <div
         style={{
           background: 'var(--cream)',
-          padding: '20px 52px',
+          padding: isMobile ? '16px 20px' : '20px 52px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           borderBottom: '1px solid rgba(139,58,30,0.15)',
+          textAlign: 'center',
         }}
       >
-        <p style={{ fontFamily: 'var(--script)', fontSize: 'clamp(20px,2.5vw,30px)', color: 'var(--terra)' }}>
+        <p style={{ 
+          fontFamily: 'var(--script)', 
+          fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(20px,2.5vw,30px)', 
+          color: 'var(--terra)' 
+        }}>
           We&apos;re glad you&apos;re here 💌
         </p>
       </div>
 
-      {/* Main footer grid */}
+      {/* Main footer grid - Mobile optimized */}
       <div
         style={{
-          padding: '56px 52px 32px',
+          padding: isMobile ? '40px 20px 32px' : '56px 52px 32px',
           display: 'grid',
-          gridTemplateColumns: '2fr 1fr 1fr 1fr',
-          gap: 48,
+          gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr 1fr',
+          gap: isMobile ? 32 : 48,
         }}
       >
         {/* Brand column */}
-        <div>
+        <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
           <p
             style={{
               fontFamily: 'var(--display)',
-              fontSize: 26,
+              fontSize: isMobile ? 22 : 26,
               letterSpacing: 4,
               textTransform: 'uppercase',
               color: 'rgba(245,240,232,.9)',
@@ -56,13 +71,19 @@ export default function Footer() {
               fontSize: 12.5,
               lineHeight: 1.8,
               color: 'rgba(245,240,232,.45)',
-              maxWidth: 260,
+              maxWidth: isMobile ? '100%' : 260,
               fontStyle: 'italic',
+              margin: isMobile ? '0 auto' : 0,
             }}
           >
             Handloom clothing made slowly in India. Comfort woven into every day.
           </p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+          <div style={{ 
+            display: 'flex', 
+            gap: 12, 
+            marginTop: 20,
+            justifyContent: isMobile ? 'center' : 'flex-start',
+          }}>
             {['✦', '◈', '◉', '▷'].map((icon, i) => (
               <Link
                 key={i}
@@ -88,7 +109,7 @@ export default function Footer() {
 
         {/* Link columns */}
         {Object.entries(footerLinks).map(([heading, items]) => (
-          <div key={heading}>
+          <div key={heading} style={{ textAlign: isMobile ? 'center' : 'left' }}>
             <p
               style={{
                 fontFamily: 'var(--sans)',
@@ -102,11 +123,17 @@ export default function Footer() {
             >
               {heading}
             </p>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <ul style={{ 
+              listStyle: 'none', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: 10,
+              alignItems: isMobile ? 'center' : 'flex-start',
+            }}>
               {items.map((item) => (
                 <li key={item}>
                   <Link
-                    href="#"
+                    href={item === 'Admin' ? '/admin/login' : '#'}
                     style={{
                       fontFamily: 'var(--sans)',
                       fontSize: 12,
@@ -127,19 +154,33 @@ export default function Footer() {
       {/* Newsletter */}
       <div
         style={{
-          padding: '24px 52px 32px',
+          padding: isMobile ? '20px 20px 28px' : '24px 52px 32px',
           borderTop: '1px solid rgba(245,240,232,.07)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: 16,
+          flexDirection: isMobile ? 'column' : 'row',
+          textAlign: isMobile ? 'center' : 'left',
         }}
       >
-        <p style={{ fontFamily: 'var(--serif)', fontSize: 13, fontStyle: 'italic', color: 'rgba(245,240,232,.3)' }}>
+        <p style={{ 
+          fontFamily: 'var(--serif)', 
+          fontSize: 13, 
+          fontStyle: 'italic', 
+          color: 'rgba(245,240,232,.3)' 
+        }}>
           We design with love. Subscribe if you&apos;d like to hear from us :)
         </p>
-        <div style={{ display: 'flex', overflow: 'hidden', border: '1px solid rgba(245,240,232,.14)', borderRadius: 2 }}>
+        <div style={{ 
+          display: 'flex', 
+          overflow: 'hidden', 
+          border: '1px solid rgba(245,240,232,.14)', 
+          borderRadius: 2,
+          width: isMobile ? '100%' : 'auto',
+          flexDirection: isMobile ? 'column' : 'row',
+        }}>
           <input
             type="email"
             placeholder="Email"
@@ -151,7 +192,8 @@ export default function Footer() {
               fontSize: 12.5,
               fontFamily: 'var(--sans)',
               outline: 'none',
-              minWidth: 190,
+              minWidth: isMobile ? '100%' : 190,
+              width: isMobile ? '100%' : 'auto',
             }}
           />
           <button
@@ -166,6 +208,7 @@ export default function Footer() {
               fontWeight: 500,
               cursor: 'pointer',
               fontFamily: 'var(--sans)',
+              width: isMobile ? '100%' : 'auto',
             }}
           >
             Subscribe
@@ -176,12 +219,14 @@ export default function Footer() {
       {/* Bottom bar */}
       <div
         style={{
-          padding: '16px 52px 20px',
+          padding: isMobile ? '16px 20px 20px' : '16px 52px 20px',
           borderTop: '1px solid rgba(245,240,232,.06)',
           display: 'flex',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: 8,
+          flexDirection: isMobile ? 'column' : 'row',
+          textAlign: 'center',
         }}
       >
         <p style={{ fontSize: 11, color: 'rgba(245,240,232,.22)', letterSpacing: 0.8, fontFamily: 'var(--sans)' }}>

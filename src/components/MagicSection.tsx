@@ -3,9 +3,21 @@
 import Image from 'next/image'
 
 const pillars = [
-  { img: '/sewingmachine.png', tag: 'INTENTIONAL PRODUCTION', desc: 'We design small-batch pieces with custom prints and textiles, crafted in ethical, women-owned, fair-wage factories supporting local tailors.' },
-  { img: '/indian-body.png', tag: 'MADE FOR INDIAN BODIES', desc: 'Designed with real proportions in mind and crafted from natural fabrics, perfect for the tropical weather. Our pieces are cut to fit and flatter Indian body types.' },
-  { img: '/time.png', tag: 'TIMELESS TREASURES', desc: 'Each piece is meant to be your companion on appraisal days, tough meetings and celebrations for years to come. Our clothes are wearable works of art, not dictated by trend, season or year.' },
+  {
+    img: '/sewingmachine.png',
+    tag: 'BREATHABLE HANDLOOM',
+    desc: 'Soft, airy cotton crafted for comfort, movement, and long everyday wear.',
+  },
+  {
+    img: '/indian-body.png',
+    tag: 'EASY EVERYDAY SILHOUETTES',
+    desc: 'Relaxed fits designed to feel effortless, balanced, and naturally wearable.',
+  },
+  {
+    img: '/time.png',
+    tag: 'THOUGHTFUL LUXURY',
+    desc: 'Timeless craftsmanship with subtle details that feel premium yet easy to live in.',
+  },
 ]
 
 export default function MagicSection() {

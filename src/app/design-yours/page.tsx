@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function DesignYours() {
   const [email, setEmail] = useState('')
@@ -14,17 +15,17 @@ export default function DesignYours() {
   }
 
   const tools = [
-    { icon: '◻', label: 'IDENTITY' },
-    { icon: '✎', label: 'STYLE' },
-    { icon: '◎', label: 'AURA' },
-    { icon: '⊕', label: 'FOCUS' },
-    { icon: '✐', label: 'STORY' },
-    { icon: '✦', label: 'EXPRESSION' },
-    { icon: 'A', label: 'VOICE' },
-    { icon: '⟋', label: 'PATH' },
-    { icon: '▭', label: 'FRAME' },
-    { icon: '◯', label: 'SHAPE' },
-    { icon: '∿', label: 'ENERGY' },
+    { icon: '◻', label: 'IDENTITY', isCustom: false },
+    { icon: '✎', label: 'STYLE', isCustom: false },
+    { icon: '◎', label: 'AURA', isCustom: false },
+    { icon: '⊕', label: 'FOCUS', isCustom: false },
+    { icon: '✐', label: 'STORY', isCustom: false },
+    { icon: '✦', label: 'EXPRESSION', isCustom: false },
+    { icon: 'A', label: 'VOICE', isCustom: false },
+    { icon: '⟋', label: 'PATH', isCustom: false },
+    { icon: '▭', label: 'FRAME', isCustom: false },
+    { icon: '◯', label: 'SHAPE', isCustom: false },
+    { icon: '/sunflower.png', label: 'ENERGY', isCustom: true }, // Custom colorful sunflower icon
   ]
 
   return (
@@ -65,7 +66,21 @@ export default function DesignYours() {
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(139,58,30,0.08)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
-              <span style={{ fontSize: 15, color: 'var(--brown2)' }}>{t.icon}</span>
+              <span style={{ fontSize: 15, color: 'var(--brown2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {t.isCustom ? (
+                  <Image 
+                    src={t.icon} 
+                    alt={t.label} 
+                    width={20} 
+                    height={20} 
+                    style={{ 
+                      display: 'block',
+                    }}
+                  />
+                ) : (
+                  t.icon
+                )}
+              </span>
               <span style={{ fontFamily: 'var(--sans)', fontSize: 7, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 500 }}>{t.label}</span>
             </div>
           ))}
@@ -169,7 +184,7 @@ export default function DesignYours() {
           </p>
         </div>
 
-        {/* Right — model illustration */}
+        {/* Right — Hero Image */}
         <div style={{
           background: 'var(--cream)',
           borderLeft: '1px solid rgba(139,58,30,0.06)',
@@ -185,16 +200,27 @@ export default function DesignYours() {
               <div key={i} style={{ position: 'absolute', top: `${i * 6.25}%`, left: 0, right: 0, height: 1, background: 'var(--terra)' }} />
             ))}
           </div>
-          <img
-            src="/modeltouse.png"
-            alt="Design your outfit — Seshara Creative Studio"
-            style={{
-              width: '100%', maxWidth: 420, height: 'auto',
-              objectFit: 'contain', display: 'block',
-              position: 'relative', zIndex: 1,
-              filter: 'drop-shadow(0 20px 40px rgba(139,58,30,0.15))',
-            }}
-          />
+          
+          {/* Hero Image - createyours-hero.webp */}
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            maxWidth: 500,
+            height: 'auto',
+            aspectRatio: '4/3',
+            zIndex: 1,
+          }}>
+            <Image
+              src="/createyours-hero.webp"
+              alt="Create Yours — Seshara Creative Studio"
+              fill
+              priority
+              style={{
+                objectFit: 'contain',
+                objectPosition: 'center',
+              }}
+            />
+          </div>
         </div>
       </div>
 

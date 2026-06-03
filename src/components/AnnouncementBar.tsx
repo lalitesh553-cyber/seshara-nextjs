@@ -1,16 +1,10 @@
 'use client'
 
 const messages = [
-  'MADE IN INDIA',
-  'SMALL BATCH · MADE TO ORDER',
-  'FREE SHIPPING ABOVE ₹999',
-  'SELECT 3 SHIRTS, PAY FOR JUST 2!',
-  'HANDLOOM COTTON · MADE IN INDIA',
-  'MADE IN INDIA',
-  'SMALL BATCH · MADE TO ORDER',
-  'FREE SHIPPING ABOVE ₹999',
-  'SELECT 3 SHIRTS, PAY FOR JUST 2!',
-  'HANDLOOM COTTON · MADE IN INDIA',
+  'Handloom Cotton',
+  'Made in India',
+  'Made to Order',
+  'Daily Casuals',
 ]
 
 export default function AnnouncementBar() {
@@ -36,7 +30,23 @@ export default function AnnouncementBar() {
               fontSize: '10.5px',
               letterSpacing: '2.5px',
               fontWeight: 500,
-              fontFamily: 'var(--sans)',
+              fontFamily: 'var(--font-sans)',
+              marginRight: '56px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {msg} &nbsp;·
+          </span>
+        ))}
+        {messages.map((msg, i) => (
+          <span
+            key={`dup-${i}`}
+            style={{
+              color: '#fff',
+              fontSize: '10.5px',
+              letterSpacing: '2.5px',
+              fontWeight: 500,
+              fontFamily: 'var(--font-sans)',
               marginRight: '56px',
               whiteSpace: 'nowrap',
             }}

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useCart } from '@/context/CartContext'
+import ProductModal from '@/components/ProductModal'
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL']
 
@@ -14,38 +15,6 @@ const summerProducts = [
   { id: 5, name: 'Royal Kalamkari Summer Top', tag: 'Kalamkari Block Print · Red', price: 3200, badge: 'Bestseller', images: ['/catalogue-5.jpeg', '/catalogue-5-1.jpeg', '/catalogue-5-2.jpeg'] },
 ]
 
-/* ── Lightbox ── */
-function Lightbox({ images, startIdx, name, onClose }: { images: string[]; startIdx: number; name: string; onClose: () => void }) {
-  const [idx, setIdx] = useState(startIdx)
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowRight') setIdx(i => (i + 1) % images.length)
-      if (e.key === 'ArrowLeft') setIdx(i => (i - 1 + images.length) % images.length)
-    }
-    document.addEventListener('keydown', h)
-    document.body.style.overflow = 'hidden'
-    return () => { document.removeEventListener('keydown', h); document.body.style.overflow = '' }
-  }, [images.length, onClose])
-
-  return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(10,5,2,0.96)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', width: 40, height: 40, borderRadius: '50%', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
-      {images.length > 1 && <button onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + images.length) % images.length) }} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', width: 42, height: 42, borderRadius: '50%', fontSize: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>}
-      <div onClick={e => e.stopPropagation()}>
-        <img src={images[idx]} alt={name} style={{ maxWidth: '90vw', maxHeight: '82vh', objectFit: 'contain', display: 'block', borderRadius: 4 }} />
-        {images.length > 1 && (
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 14 }}>
-            {images.map((_, i) => <button key={i} onClick={() => setIdx(i)} style={{ width: i === idx ? 20 : 7, height: 7, borderRadius: 4, border: 'none', padding: 0, background: i === idx ? 'var(--terra)' : 'rgba(255,255,255,0.3)', cursor: 'pointer', transition: 'all 0.25s' }} />)}
-          </div>
-        )}
-      </div>
-      {images.length > 1 && <button onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % images.length) }} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', width: 42, height: 42, borderRadius: '50%', fontSize: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>}
-    </div>
-  )
-}
-
-/* ── Single product card — used in both desktop grid and mobile swipe ── */
 function ProductCard({ product, compact = false }: { product: (typeof summerProducts)[0]; compact?: boolean }) {
   const { addItem } = useCart()
   const [imgIdx, setImgIdx] = useState(0)
@@ -53,7 +22,7 @@ function ProductCard({ product, compact = false }: { product: (typeof summerProd
   const [selectedSize, setSelectedSize] = useState('')
   const [sizeError, setSizeError] = useState(false)
   const [added, setAdded] = useState(false)
-  const [lightbox, setLightbox] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -66,19 +35,10 @@ function ProductCard({ product, compact = false }: { product: (typeof summerProd
 
   return (
     <>
-      {lightbox && <Lightbox images={product.images} startIdx={imgIdx} name={product.name} onClose={() => setLightbox(false)} />}
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{ background: '#fff', display: 'flex', flexDirection: 'column', height: '100%' }}
-      >
-        {/* Image */}
-        <div onClick={() => setLightbox(true)} style={{ position: 'relative', overflow: 'hidden', aspectRatio: '3/4', background: '#f0ebe0', cursor: 'zoom-in', flexShrink: 0 }}>
-          <img
-            src={product.images[imgIdx]} alt={product.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block', transition: 'transform 0.5s', transform: hovered ? 'scale(1.04)' : 'scale(1)' }}
-            loading="eager"
-          />
+      <ProductModal product={product} isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{ background: '#fff', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div onClick={() => setModalOpen(true)} style={{ position: 'relative', overflow: 'hidden', aspectRatio: '3/4', background: '#f0ebe0', cursor: 'zoom-in', flexShrink: 0 }}>
+          <img src={product.images[imgIdx]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block', transition: 'transform 0.5s', transform: hovered ? 'scale(1.04)' : 'scale(1)' }} loading="eager" />
           {product.badge && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 2, background: 'var(--terra)', color: '#fff', padding: '3px 8px', fontSize: 8, letterSpacing: 1.5, fontFamily: 'DM Sans,sans-serif', fontWeight: 500, textTransform: 'uppercase' }}>{product.badge}</div>}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2, background: 'rgba(46,26,14,0.5)', color: 'rgba(245,238,218,0.8)', width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, opacity: hovered ? 1 : 0.5, transition: 'opacity 0.3s' }}>⊕</div>
           {product.images.length > 1 && hovered && (
@@ -87,41 +47,23 @@ function ProductCard({ product, compact = false }: { product: (typeof summerProd
             </div>
           )}
         </div>
-
-        {/* Info */}
         <div style={{ padding: compact ? '10px 8px 12px' : '12px 10px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
           <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: compact ? 8 : 9, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--terra)', marginBottom: 3 }}>{product.tag}</p>
           <p style={{ fontFamily: 'Playfair Display,serif', fontSize: compact ? 12 : 13, fontWeight: 400, color: 'var(--brown)', marginBottom: 4, lineHeight: 1.3 }}>{product.name}</p>
           <p style={{ fontFamily: 'Cormorant Garamond,serif', fontSize: compact ? 13 : 14, color: 'var(--muted)', fontStyle: 'italic', marginBottom: 10 }}>₹{product.price.toLocaleString('en-IN')}</p>
-
-          {/* Sizes */}
           <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 6 }}>
             {SIZES.map(size => (
-              <button key={size} onClick={() => { setSelectedSize(size); setSizeError(false) }} style={{
-                padding: '3px 6px', fontSize: 8, letterSpacing: 1, fontFamily: 'DM Sans,sans-serif', fontWeight: 500, textTransform: 'uppercase',
-                border: selectedSize === size ? '1.5px solid var(--terra)' : sizeError ? '1.5px solid rgba(180,60,40,0.5)' : '1.5px solid rgba(139,58,30,0.18)',
-                background: selectedSize === size ? 'var(--terra)' : 'transparent',
-                color: selectedSize === size ? '#fff' : 'var(--muted)',
-                borderRadius: 1, cursor: 'pointer', transition: 'all .2s',
-              }}>{size}</button>
+              <button key={size} onClick={() => { setSelectedSize(size); setSizeError(false) }} style={{ padding: '3px 6px', fontSize: 8, letterSpacing: 1, fontFamily: 'DM Sans,sans-serif', fontWeight: 500, textTransform: 'uppercase', border: selectedSize === size ? '1.5px solid var(--terra)' : sizeError ? '1.5px solid rgba(180,60,40,0.5)' : '1.5px solid rgba(139,58,30,0.18)', background: selectedSize === size ? 'var(--terra)' : 'transparent', color: selectedSize === size ? '#fff' : 'var(--muted)', borderRadius: 1, cursor: 'pointer', transition: 'all .2s' }}>{size}</button>
             ))}
           </div>
           {sizeError && <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, color: 'var(--terra)', marginBottom: 4 }}>Select a size</p>}
-
-          <button onClick={handleAdd} style={{
-            marginTop: 'auto', width: '100%', padding: compact ? '9px 0' : '10px 0',
-            background: added ? '#2d6a4f' : 'var(--brown)',
-            color: '#fff', border: 'none', borderRadius: 1,
-            fontFamily: 'DM Sans,sans-serif', fontSize: 8, letterSpacing: 2,
-            textTransform: 'uppercase', fontWeight: 500, cursor: 'pointer', transition: 'background .3s',
-          }}>{added ? '✓ Added' : '+ Add to Cart'}</button>
+          <button onClick={handleAdd} style={{ marginTop: 'auto', width: '100%', padding: compact ? '9px 0' : '10px 0', background: added ? '#2d6a4f' : 'var(--brown)', color: '#fff', border: 'none', borderRadius: 1, fontFamily: 'DM Sans,sans-serif', fontSize: 8, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 500, cursor: 'pointer', transition: 'background .3s' }}>{added ? '✓ Added' : '+ Add to Cart'}</button>
         </div>
       </div>
     </>
   )
 }
 
-/* ── Mobile horizontal swipe catalog ── */
 function MobileCatalog() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIdx, setActiveIdx] = useState(0)
@@ -135,63 +77,28 @@ function MobileCatalog() {
 
   return (
     <div style={{ width: '100%' }}>
-      {/* Swipe hint */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 12px' }}>
-        <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--muted)' }}>
-          {activeIdx + 1} of {summerProducts.length}
-        </span>
-        <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, letterSpacing: 1.5, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-          Swipe ›
-        </span>
+        <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--muted)' }}>{activeIdx + 1} of {summerProducts.length}</span>
+        <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, letterSpacing: 1.5, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 4 }}>Swipe ›</span>
       </div>
-
-      {/* Scrollable strip */}
-      <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        style={{
-          width: '100%',
-          overflowX: 'scroll',
-          overflowY: 'hidden',
-          WebkitOverflowScrolling: 'touch' as never,
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          display: 'flex',
-          gap: 1,
-          paddingLeft: 16,
-          paddingRight: 16,
-          paddingBottom: 4,
-        }}
-      >
+      <div ref={scrollRef} onScroll={handleScroll} style={{ width: '100%', overflowX: 'scroll', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' as never, scrollSnapType: 'x mandatory', scrollbarWidth: 'none', display: 'flex', gap: 1, paddingLeft: 16, paddingRight: 16, paddingBottom: 4 }}>
         <style>{`.mob-scroll::-webkit-scrollbar{display:none}`}</style>
         {summerProducts.map((p, i) => (
-          <div key={i} style={{
-            flexShrink: 0,
-            width: 'calc(62vw - 8px)',
-            scrollSnapAlign: 'start',
-          }}>
+          <div key={i} style={{ flexShrink: 0, width: 'calc(62vw - 8px)', scrollSnapAlign: 'start' }}>
             <ProductCard product={p} compact />
           </div>
         ))}
-        {/* Trailing spacer */}
         <div style={{ flexShrink: 0, width: 16 }} />
       </div>
-
-      {/* Dot indicators */}
       <div style={{ display: 'flex', gap: 6, justifyContent: 'center', padding: '12px 0 4px' }}>
         {summerProducts.map((_, i) => (
-          <div key={i} style={{
-            width: i === activeIdx ? 20 : 6, height: 6, borderRadius: 3,
-            background: i === activeIdx ? 'var(--terra)' : 'rgba(139,58,30,0.22)',
-            transition: 'all 0.3s ease',
-          }} />
+          <div key={i} style={{ width: i === activeIdx ? 20 : 6, height: 6, borderRadius: 3, background: i === activeIdx ? 'var(--terra)' : 'rgba(139,58,30,0.22)', transition: 'all 0.3s ease' }} />
         ))}
       </div>
     </div>
   )
 }
 
-/* ── Main export ── */
 export default function CatalogSection() {
   const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
@@ -203,13 +110,10 @@ export default function CatalogSection() {
 
   return (
     <section id="catalog" style={{ background: '#fff', padding: 0 }}>
-      {/* Offer bar */}
       <div style={{ background: '#fff', padding: '11px 16px', fontFamily: 'DM Sans,sans-serif', fontSize: isMobile ? 10 : 12, textAlign: 'center', color: 'var(--brown2)', letterSpacing: 0.3, borderBottom: '1px solid rgba(139,58,30,0.1)' }}>
         Add any 3 shirts → Pay for just 2 ♡ &nbsp; Free shipping above ₹999
       </div>
-
       <div style={{ padding: isMobile ? '24px 0 40px' : '48px 28px 60px' }}>
-        {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: isMobile ? 20 : 40, padding: isMobile ? '0 16px' : 0 }}>
           <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: 'var(--terra)', marginBottom: 8, fontWeight: 500 }}>Collection 2026</p>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 10 }}>
@@ -221,17 +125,12 @@ export default function CatalogSection() {
           <h2 style={{ fontFamily: 'Playfair Display,serif', fontSize: isMobile ? 'clamp(20px,5.5vw,28px)' : 'clamp(22px,3.5vw,44px)', fontWeight: 400, color: 'var(--brown)' }}>Shop the Collection</h2>
           <div style={{ width: 36, height: 1, background: 'rgba(139,58,30,0.3)', margin: '10px auto 0' }} />
         </div>
-
-        {/* Desktop grid */}
         {!isMobile && (
           <div className="catalog-grid-5" style={{ gap: '0 1px', background: 'rgba(139,58,30,0.06)', margin: '0 0 28px' }}>
             {summerProducts.map(p => <ProductCard key={p.id} product={p} />)}
           </div>
         )}
-
-        {/* Mobile swipe */}
         {isMobile && <MobileCatalog />}
-
         <div style={{ textAlign: 'center', padding: isMobile ? '8px 16px 0' : 0 }}>
           <Link href="#" className="catalog-section-link">VIEW ALL PIECES</Link>
         </div>
