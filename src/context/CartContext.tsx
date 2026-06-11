@@ -153,7 +153,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
           setLoading(false)
 
-          // Send email notification (admin + customer)
           try {
             await fetch('/api/send-order-email', {
               method: 'POST',
