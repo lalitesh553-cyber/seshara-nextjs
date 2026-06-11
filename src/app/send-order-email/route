@@ -22,13 +22,12 @@ export async function POST(req: Request) {
       auth: { user: emailUser, pass: emailPass },
     })
 
-    // Build HTML for admin email
     const itemsList = items.map((item: any) => `
       <tr>
         <td style="padding:8px; border-bottom:1px solid #eee;">${item.name} (Size: ${item.size})</td>
         <td style="padding:8px; border-bottom:1px solid #eee; text-align:center;">${item.quantity}</td>
         <td style="padding:8px; border-bottom:1px solid #eee; text-align:right;">₹${(item.price * item.quantity).toLocaleString('en-IN')}</td>
-      </table>
+      </tr>
     `).join('')
 
     const adminHtml = `
@@ -64,15 +63,13 @@ export async function POST(req: Request) {
       </div>
     `
 
-    // Send admin email
     await transporter.sendMail({
       from: `"Seshara Orders" <${emailUser}>`,
-      to: emailUser, // Seshara.info@gmail.com
+      to: emailUser,
       subject: `🛍 New Order #${orderId} – ₹${total.toLocaleString('en-IN')}`,
       html: adminHtml,
     })
 
-    // Send customer confirmation email
     const customerHtml = `
       <div style="font-family: 'DM Sans', sans-serif; max-width: 500px; color:#2c1a0e;">
         <h2>Thank you for shopping with Seshara! ♡</h2>
