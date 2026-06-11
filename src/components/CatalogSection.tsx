@@ -111,7 +111,7 @@ export default function CatalogSection() {
   return (
     <section id="catalog" style={{ background: '#fff', padding: 0 }}>
       <div style={{ background: '#fff', padding: '11px 16px', fontFamily: 'DM Sans,sans-serif', fontSize: isMobile ? 10 : 12, textAlign: 'center', color: 'var(--brown2)', letterSpacing: 0.3, borderBottom: '1px solid rgba(139,58,30,0.1)' }}>
-        Add any 3 shirts → Pay for just 2 ♡ &nbsp; Free shipping above ₹999
+        Free Shipping Above ₹3499
       </div>
       <div style={{ padding: isMobile ? '24px 0 40px' : '48px 28px 60px' }}>
         <div style={{ textAlign: 'center', marginBottom: isMobile ? 20 : 40, padding: isMobile ? '0 16px' : 0 }}>
