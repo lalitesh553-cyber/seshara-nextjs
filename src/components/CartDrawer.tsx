@@ -1,10 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { useCart } from '@/context/CartContext'
 import Image from 'next/image'
+import ShippingDetailsModal from './ShippingDetailsModal'
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { items, count, total, removeItem, updateQty, checkout, checkoutLoading } = useCart()
+  const { items, count, total, removeItem, updateQty, checkoutWithShipping, checkoutLoading } = useCart()
+  const [shippingModalOpen, setShippingModalOpen] = useState(false)
+
+  const handleProceedToCheckout = () => {
+    setShippingModalOpen(true)
+  }
 
   return (
     <>
@@ -85,7 +92,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                 <p style={{ fontFamily: 'var(--sans)', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 10 }}>
                   Size: {item.size}
                 </p>
-                {/* Qty control */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 0, border: '1px solid rgba(139,58,30,0.2)', width: 'fit-content', borderRadius: 2 }}>
                   <button
                     onClick={() => updateQty(item.id, item.size, item.quantity - 1)}
@@ -118,7 +124,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
         {/* Footer */}
         {items.length > 0 && (
           <div style={{ padding: '20px 28px 28px', background: '#fff', borderTop: '1px solid rgba(139,58,30,0.1)' }}>
-            {/* Subtotal */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <p style={{ fontFamily: 'var(--sans)', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--muted)' }}>Subtotal</p>
               <p style={{ fontFamily: 'var(--display)', fontSize: 20, fontWeight: 400, color: 'var(--brown)' }}>
@@ -128,7 +133,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             <p style={{ fontFamily: 'var(--serif)', fontSize: 12, color: 'var(--muted)', fontStyle: 'italic', marginBottom: 18 }}>
               Shipping & taxes calculated at checkout
             </p>
-            {/* Free shipping banner */}
             {total < 999 && (
               <div style={{ background: 'rgba(139,58,30,0.06)', padding: '10px 14px', borderRadius: 2, marginBottom: 16 }}>
                 <p style={{ fontFamily: 'var(--sans)', fontSize: 11, color: 'var(--terra)', letterSpacing: 0.5 }}>
@@ -136,9 +140,8 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                 </p>
               </div>
             )}
-            {/* Razorpay checkout */}
             <button
-              onClick={checkout}
+              onClick={handleProceedToCheckout}
               disabled={checkoutLoading}
               style={{
                 width: '100%', padding: '16px 0',
@@ -154,7 +157,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                   Processing...
                 </>
               ) : (
-                <>Pay Securely — ₹{total.toLocaleString('en-IN')}</>
+                <>Proceed to Checkout — ₹{total.toLocaleString('en-IN')}</>
               )}
             </button>
             <p style={{ fontFamily: 'var(--serif)', fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', textAlign: 'center', marginTop: 12 }}>
@@ -163,6 +166,17 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           </div>
         )}
       </aside>
+
+      <ShippingDetailsModal
+        open={shippingModalOpen}
+        onClose={() => setShippingModalOpen(false)}
+        onSubmit={async (details) => {
+          await checkoutWithShipping(details)
+          setShippingModalOpen(false)
+          onClose()
+        }}
+        loading={checkoutLoading}
+      />
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>
