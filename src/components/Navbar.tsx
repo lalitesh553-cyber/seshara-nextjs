@@ -26,6 +26,8 @@ export default function Navbar() {
               { label: 'Our Story', href: '#our-story' },
               { label: 'Design Yours', href: '/design-yours' },
               { label: 'Collections', href: '#' },
+              { label: "Men's Wear", href: '#mens-wear' },
+              { label: "Women's Wear", href: '#womens-wear' },
             ].map(({ label, href }) => (
               <li key={label}>
                 <Link href={href} className="nav-link">{label}</Link>
@@ -54,9 +56,8 @@ export default function Navbar() {
             <div style={{ fontFamily: 'var(--display)', fontSize: 'clamp(16px,2vw,22px)', letterSpacing: 6, textTransform: 'uppercase', color: 'var(--terra)', fontWeight: 600 }}>SESHARA</div>
           </Link>
 
-          {/* Right */}
+          {/* Right side icons & cart */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--brown2)' }}>⌕</button>
             <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--brown2)' }} className="desktop-nav">♡</button>
             <button
               onClick={() => setCartOpen(true)}
@@ -90,7 +91,8 @@ export default function Navbar() {
               { label: 'Our Story', href: '#our-story' },
               { label: 'Design Yours', href: '/design-yours' },
               { label: 'Collections', href: '#' },
-              { label: 'Journal', href: '#' },
+              { label: "Men's Wear", href: '#mens-wear' },
+              { label: "Women's Wear", href: '#womens-wear' },
             ].map(({ label, href }) => (
               <div key={label} style={{ borderBottom: '1px solid rgba(139,58,30,0.07)', padding: '12px 0' }}>
                 <Link href={href} onClick={() => setMenuOpen(false)} style={{ fontFamily: 'var(--sans)', fontSize: 12, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--brown2)', textDecoration: 'none', fontWeight: 500 }}>
