@@ -11,6 +11,15 @@ export interface CartItem {
   quantity: number
 }
 
+interface ShippingDetails {
+  name: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  pincode: string
+}
+
 interface CartContextType {
   items: CartItem[]
   count: number
@@ -19,7 +28,7 @@ interface CartContextType {
   removeItem: (id: number, size: string) => void
   updateQty: (id: number, size: string, qty: number) => void
   clearCart: () => void
-  checkout: () => Promise<void>
+  checkoutWithShipping: (shipping: ShippingDetails) => Promise<void>
   checkoutLoading: boolean
 }
 
@@ -73,7 +82,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => setItems([]), [])
 
-  const checkout = useCallback(async () => {
+  const checkoutWithShipping = useCallback(async (shipping: ShippingDetails) => {
     if (items.length === 0) return
     setLoading(true)
 
@@ -92,13 +101,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      // Step 1 — Create order on backend
       const res = await fetch('/api/razorpay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: Math.round(total * 100), // paise
+          amount: Math.round(total * 100),
           currency: 'INR',
+          shipping: {
+            name: shipping.name,
+            email: shipping.email,
+            phone: shipping.phone,
+            address: shipping.address,
+            city: shipping.city,
+            pincode: shipping.pincode,
+          },
           notes: {
             items: items.map(i => `${i.name} (${i.size}) ×${i.quantity}`).join(', '),
           },
@@ -113,25 +129,54 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      // Step 2 — Open Razorpay with order_id
       const options = {
-        key:         keyId,
-        amount:      data.amount,
-        currency:    data.currency,
-        order_id:    data.orderId,
-        name:        'Seshara',
+        key: keyId,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: 'Seshara',
         description: `${count} item${count > 1 ? 's' : ''} — Summer Collection 2026`,
-        image:       '/favicon.ico',
-        prefill:     { name: '', email: '', contact: '' },
-        theme:       { color: '#8b3a1e' },
+        image: '/favicon.ico',
+        prefill: {
+          name: shipping.name,
+          email: shipping.email,
+          contact: shipping.phone,
+        },
+        notes: {
+          shipping_address: `${shipping.address}, ${shipping.city} - ${shipping.pincode}`,
+        },
+        theme: { color: '#8b3a1e' },
         modal: {
           confirm_close: true,
           ondismiss: () => setLoading(false),
         },
-        handler: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+        handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
           setLoading(false)
+
+          // Send email notification (admin + customer)
+          try {
+            await fetch('/api/send-order-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                items: items.map(item => ({
+                  name: item.name,
+                  size: item.size,
+                  quantity: item.quantity,
+                  price: item.price,
+                })),
+                total,
+                shipping,
+              }),
+            })
+          } catch (err) {
+            console.error('Failed to send email notification', err)
+          }
+
           clearCart()
-          alert(`✓ Payment successful!\nPayment ID: ${response.razorpay_payment_id}\n\nThank you for shopping with Seshara ♡`)
+          alert(`✓ Payment successful!\nOrder ID: ${response.razorpay_order_id}\n\nA confirmation email has been sent. Thank you for shopping with Seshara ♡`)
         },
       }
 
@@ -150,7 +195,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, total, count, clearCart])
 
   return (
-    <CartContext.Provider value={{ items, count, total, addItem, removeItem, updateQty, clearCart, checkout, checkoutLoading }}>
+    <CartContext.Provider value={{ items, count, total, addItem, removeItem, updateQty, clearCart, checkoutWithShipping, checkoutLoading }}>
       {children}
     </CartContext.Provider>
   )
