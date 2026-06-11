@@ -15,7 +15,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
 
   return (
     <>
-      {/* Backdrop */}
       {open && (
         <div
           onClick={onClose}
@@ -26,7 +25,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
         />
       )}
 
-      {/* Drawer */}
       <aside style={{
         position: 'fixed', top: 0, right: 0, bottom: 0,
         width: 'clamp(320px, 38vw, 480px)',
@@ -37,8 +35,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
         display: 'flex', flexDirection: 'column',
         boxShadow: '-8px 0 40px rgba(20,10,4,0.18)',
       }}>
-
-        {/* Header */}
         <div style={{
           padding: '22px 28px',
           borderBottom: '1px solid rgba(139,58,30,0.1)',
@@ -64,7 +60,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           >×</button>
         </div>
 
-        {/* Items */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px' }}>
           {items.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0' }}>
@@ -121,7 +116,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           ))}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
           <div style={{ padding: '20px 28px 28px', background: '#fff', borderTop: '1px solid rgba(139,58,30,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
