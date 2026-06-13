@@ -3,16 +3,15 @@
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useCart } from '@/context/CartContext'
-import ProductModal from '@/components/ProductModal'
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL']
 
 const summerProducts = [
-  { id: 1, name: 'Sunlit Heritage Collar Shirt', tag: 'Handloom Cotton · Ivory', price: 2600, badge: null as string | null, images: ['/catalogue-1.jpeg', '/catalogue-1-1.jpeg'] },
-  { id: 2, name: 'Sapphire Breeze Casual Shirt', tag: 'Cotton Linen · Navy', price: 2900, badge: 'New', images: ['/catalogue-2.jpeg', '/catalogue-2-1.jpeg'] },
-  { id: 3, name: 'Brickwood Classic Kurta Shirt', tag: 'Handloom · Maroon Check', price: 2800, badge: 'Bestseller', images: ['/catalogue-3.jpeg', '/catalogue-3-1.jpeg', '/catalogue-3-2.jpeg'] },
-  { id: 4, name: 'Sunset Cocoa Sleeveless Shirt', tag: 'Cotton · Maroon Check', price: 2500, badge: null, images: ['/catalogue-4.png', '/catalogue-4-1.png'] },
-  { id: 5, name: 'Royal Kalamkari Summer Top', tag: 'Kalamkari Block Print · Red', price: 3200, badge: 'Bestseller', images: ['/catalogue-5.jpeg', '/catalogue-5-1.jpeg', '/catalogue-5-2.jpeg'] },
+  { id: 1, slug: 'sunlit-heritage-collar-shirt', name: 'Sunlit Heritage Collar Shirt', tag: 'Handloom Cotton · Ivory', price: 2600, badge: null as string | null, images: ['/catalogue-1.jpeg', '/catalogue-1-1.jpeg'] },
+  { id: 2, slug: 'sapphire-breeze-casual-shirt', name: 'Sapphire Breeze Casual Shirt', tag: 'Cotton Linen · Navy', price: 2900, badge: 'New', images: ['/catalogue-2.jpeg', '/catalogue-2-1.jpeg'] },
+  { id: 3, slug: 'brickwood-classic-kurta-shirt', name: 'Brickwood Classic Kurta Shirt', tag: 'Handloom · Maroon Check', price: 2800, badge: 'Bestseller', images: ['/catalogue-3.jpeg', '/catalogue-3-1.jpeg', '/catalogue-3-2.jpeg'] },
+  { id: 4, slug: 'sunset-cocoa-sleeveless-shirt', name: 'Sunset Cocoa Sleeveless Shirt', tag: 'Cotton · Maroon Check', price: 2500, badge: null, images: ['/catalogue-4.png', '/catalogue-4-1.png'] },
+  { id: 5, slug: 'royal-kalamkari-summer-top', name: 'Royal Kalamkari Summer Top', tag: 'Kalamkari Block Print · Red', price: 3200, badge: 'Bestseller', images: ['/catalogue-5.jpeg', '/catalogue-5-1.jpeg', '/catalogue-5-2.jpeg'] },
 ]
 
 function ProductCard({ product, compact = false }: { product: (typeof summerProducts)[0]; compact?: boolean }) {
@@ -22,7 +21,6 @@ function ProductCard({ product, compact = false }: { product: (typeof summerProd
   const [selectedSize, setSelectedSize] = useState('')
   const [sizeError, setSizeError] = useState(false)
   const [added, setAdded] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -34,33 +32,36 @@ function ProductCard({ product, compact = false }: { product: (typeof summerProd
   }
 
   return (
-    <>
-      <ProductModal product={product} isOpen={modalOpen} onClose={() => setModalOpen(false)} />
-      <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{ background: '#fff', display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <div onClick={() => setModalOpen(true)} style={{ position: 'relative', overflow: 'hidden', aspectRatio: '3/4', background: '#f0ebe0', cursor: 'zoom-in', flexShrink: 0 }}>
+    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{ background: '#fff', display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Link href={`/products/${product.slug}`} style={{ textDecoration: 'none' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', aspectRatio: '3/4', background: '#f0ebe0', cursor: 'pointer', flexShrink: 0 }}>
           <img src={product.images[imgIdx]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block', transition: 'transform 0.5s', transform: hovered ? 'scale(1.04)' : 'scale(1)' }} loading="eager" />
           {product.badge && <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 2, background: 'var(--terra)', color: '#fff', padding: '3px 8px', fontSize: 8, letterSpacing: 1.5, fontFamily: 'DM Sans,sans-serif', fontWeight: 500, textTransform: 'uppercase' }}>{product.badge}</div>}
           <div style={{ position: 'absolute', top: 8, right: 8, zIndex: 2, background: 'rgba(46,26,14,0.5)', color: 'rgba(245,238,218,0.8)', width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, opacity: hovered ? 1 : 0.5, transition: 'opacity 0.3s' }}>⊕</div>
           {product.images.length > 1 && hovered && (
             <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 4, zIndex: 3 }}>
-              {product.images.map((_, i) => <button key={i} onClick={e => { e.stopPropagation(); setImgIdx(i) }} style={{ width: i === imgIdx ? 14 : 5, height: 5, borderRadius: 3, border: 'none', padding: 0, background: i === imgIdx ? 'rgba(245,238,218,0.95)' : 'rgba(245,238,218,0.4)', cursor: 'pointer', transition: 'all 0.2s' }} />)}
+              {product.images.map((_, i) => (
+                <button key={i} onClick={e => { e.preventDefault(); e.stopPropagation(); setImgIdx(i) }} style={{ width: i === imgIdx ? 14 : 5, height: 5, borderRadius: 3, border: 'none', padding: 0, background: i === imgIdx ? 'rgba(245,238,218,0.95)' : 'rgba(245,238,218,0.4)', cursor: 'pointer', transition: 'all 0.2s' }} />
+              ))}
             </div>
           )}
         </div>
-        <div style={{ padding: compact ? '10px 8px 12px' : '12px 10px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: compact ? 8 : 9, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--terra)', marginBottom: 3 }}>{product.tag}</p>
-          <p style={{ fontFamily: 'Playfair Display,serif', fontSize: compact ? 12 : 13, fontWeight: 400, color: 'var(--brown)', marginBottom: 4, lineHeight: 1.3 }}>{product.name}</p>
-          <p style={{ fontFamily: 'Cormorant Garamond,serif', fontSize: compact ? 13 : 14, color: 'var(--muted)', fontStyle: 'italic', marginBottom: 10 }}>₹{product.price.toLocaleString('en-IN')}</p>
-          <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 6 }}>
-            {SIZES.map(size => (
-              <button key={size} onClick={() => { setSelectedSize(size); setSizeError(false) }} style={{ padding: '3px 6px', fontSize: 8, letterSpacing: 1, fontFamily: 'DM Sans,sans-serif', fontWeight: 500, textTransform: 'uppercase', border: selectedSize === size ? '1.5px solid var(--terra)' : sizeError ? '1.5px solid rgba(180,60,40,0.5)' : '1.5px solid rgba(139,58,30,0.18)', background: selectedSize === size ? 'var(--terra)' : 'transparent', color: selectedSize === size ? '#fff' : 'var(--muted)', borderRadius: 1, cursor: 'pointer', transition: 'all .2s' }}>{size}</button>
-            ))}
-          </div>
-          {sizeError && <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, color: 'var(--terra)', marginBottom: 4 }}>Select a size</p>}
-          <button onClick={handleAdd} style={{ marginTop: 'auto', width: '100%', padding: compact ? '9px 0' : '10px 0', background: added ? '#2d6a4f' : 'var(--brown)', color: '#fff', border: 'none', borderRadius: 1, fontFamily: 'DM Sans,sans-serif', fontSize: 8, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 500, cursor: 'pointer', transition: 'background .3s' }}>{added ? '✓ Added' : '+ Add to Cart'}</button>
+      </Link>
+      <div style={{ padding: compact ? '10px 8px 12px' : '12px 10px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: compact ? 8 : 9, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--terra)', marginBottom: 3 }}>{product.tag}</p>
+        <Link href={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <p style={{ fontFamily: 'Playfair Display,serif', fontSize: compact ? 12 : 13, fontWeight: 400, color: 'var(--brown)', marginBottom: 4, lineHeight: 1.3, cursor: 'pointer' }}>{product.name}</p>
+        </Link>
+        <p style={{ fontFamily: 'Cormorant Garamond,serif', fontSize: compact ? 13 : 14, color: 'var(--muted)', fontStyle: 'italic', marginBottom: 10 }}>₹{product.price.toLocaleString('en-IN')}</p>
+        <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 6 }}>
+          {SIZES.map(size => (
+            <button key={size} onClick={() => { setSelectedSize(size); setSizeError(false) }} style={{ padding: '3px 6px', fontSize: 8, letterSpacing: 1, fontFamily: 'DM Sans,sans-serif', fontWeight: 500, textTransform: 'uppercase', border: selectedSize === size ? '1.5px solid var(--terra)' : sizeError ? '1.5px solid rgba(180,60,40,0.5)' : '1.5px solid rgba(139,58,30,0.18)', background: selectedSize === size ? 'var(--terra)' : 'transparent', color: selectedSize === size ? '#fff' : 'var(--muted)', borderRadius: 1, cursor: 'pointer', transition: 'all .2s' }}>{size}</button>
+          ))}
         </div>
+        {sizeError && <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 9, color: 'var(--terra)', marginBottom: 4 }}>Select a size</p>}
+        <button onClick={handleAdd} style={{ marginTop: 'auto', width: '100%', padding: compact ? '9px 0' : '10px 0', background: added ? '#2d6a4f' : 'var(--brown)', color: '#fff', border: 'none', borderRadius: 1, fontFamily: 'DM Sans,sans-serif', fontSize: 8, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 500, cursor: 'pointer', transition: 'background .3s' }}>{added ? '✓ Added' : '+ Add to Cart'}</button>
       </div>
-    </>
+    </div>
   )
 }
 
