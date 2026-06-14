@@ -32,9 +32,10 @@ const [orderType, setOrderType] = useState<
 
 const [showMeasurementModal, setShowMeasurementModal] =
   useState(false)
-
 const [measurements, setMeasurements] =
   useState<CustomMeasurements | null>(null)
+const [openSection, setOpenSection] =
+  useState<string | null>(null)
   if (!product) {
     notFound()
   }
@@ -410,22 +411,61 @@ if (
     : 'Add To Cart'}
 </button>
 
-              <div
-                style={{
-                  borderTop:
-                    '1px solid rgba(139,58,30,.12)',
-                  paddingTop: 20,
-                  color: 'var(--muted)',
-                  lineHeight: 2,
-                }}
-              >
-                <p>✓ Handcrafted in India</p>
-                <p>✓ Premium Handloom Fabric</p>
-                <p>✓ Secure Razorpay Checkout</p>
-                <p>✓ Free Shipping Above ₹3499</p>
-              </div>
-            </div>
-          </div>
+              <div className="mobile-accordion">
+  {[
+    {
+      title: 'Description & Fit',
+      content: product.description,
+    },
+    {
+      title: 'Materials',
+      content:
+        'Premium handloom cotton crafted by Indian artisans.',
+    },
+    {
+      title: 'Care Guide',
+      content:
+        'Gentle hand wash or machine wash in cold water.',
+    },
+    {
+      title: 'Shipping & Returns',
+      content:
+        'Made-to-order pieces ship within 7–10 working days.',
+    },
+  ].map((section) => (
+    <div
+      key={section.title}
+      className="accordion-item"
+    >
+      <button
+        className="accordion-header"
+        onClick={() =>
+          setOpenSection(
+            openSection === section.title
+              ? null
+              : section.title
+          )
+        }
+      >
+        <span>{section.title}</span>
+
+        <span>
+          {openSection === section.title
+            ? '−'
+            : '+'}
+        </span>
+      </button>
+
+      {openSection === section.title && (
+        <div className="accordion-content">
+          {section.content}
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+            </div> 
+          </div> 
 
           <section
             style={{
@@ -495,7 +535,7 @@ if (
               ))}
             </div>
           </section>
-        </div>
+        </div> 
 
         <style jsx>{`
           @media (max-width: 900px) {
@@ -516,6 +556,47 @@ if (
     setShowMeasurementModal(false)
   }}
 />
+<div className="mobile-sticky-cart">
+  <div>
+    <p
+      style={{
+        margin: 0,
+        color: 'var(--brown)',
+        fontWeight: 600,
+      }}
+    >
+      ₹{product.price.toLocaleString('en-IN')}
+    </p>
+
+    <span
+      style={{
+        fontSize: 11,
+        color: 'var(--muted)',
+      }}
+    >
+      {orderType === 'custom'
+        ? 'Custom Measurements'
+        : 'Standard Size'}
+    </span>
+  </div>
+
+  <button
+    onClick={handleAddToCart}
+    style={{
+      background: 'var(--terra)',
+      color: '#fff',
+      border: 'none',
+      padding: '14px 24px',
+      cursor: 'pointer',
+      letterSpacing: 2,
+      textTransform: 'uppercase',
+      fontSize: 11,
+      fontWeight: 600,
+    }}
+  >
+    Add To Cart
+  </button>
+</div>
       <Footer />
     </>
   )
