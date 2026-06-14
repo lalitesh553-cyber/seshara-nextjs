@@ -145,13 +145,14 @@ if (
           >
             <div>
               <div
-                style={{
-                  background: '#fff',
-                  aspectRatio: '3/4',
-                  overflow: 'hidden',
-                  marginBottom: 16,
-                }}
-              >
+  className="product-main-image"
+  style={{
+    background: '#fff',
+    aspectRatio: '3/4',
+    overflow: 'hidden',
+    marginBottom: 16,
+  }}
+>
                 <img
                   src={product.images[selectedImage]}
                   alt={product.name}
@@ -217,9 +218,10 @@ if (
               </p>
 
               <h1
-                style={{
-                  fontFamily:
-                    'Playfair Display, serif',
+  className="mobile-product-title"
+  style={{
+    fontFamily:
+      'Playfair Display, serif',
                   fontWeight: 400,
                   fontSize: 'clamp(32px,4vw,52px)',
                   color: 'var(--brown)',
@@ -231,9 +233,10 @@ if (
               </h1>
 
               <p
-                style={{
-                  fontFamily:
-                    'Cormorant Garamond, serif',
+  className="mobile-product-price"
+  style={{
+    fontFamily:
+      'Cormorant Garamond, serif',
                   fontSize: 34,
                   color: 'var(--terra)',
                   marginBottom: 24,
@@ -486,7 +489,7 @@ if (
               You May Also Like
             </h2>
 
-            <div className="catalog-grid-4">
+            <div className="catalog-grid-4 mobile-related-products">
               {relatedProducts.map((item) => (
                 <Link
                   key={item.id}
@@ -537,14 +540,92 @@ if (
           </section>
         </div> 
 
-        <style jsx>{`
-          @media (max-width: 900px) {
-            .product-layout {
-              grid-template-columns: 1fr !important;
-              gap: 32px !important;
-            }
-          }
-        `}</style>
+      <style jsx>{`
+  @media (max-width: 900px) {
+    .product-layout {
+      grid-template-columns: 1fr !important;
+      gap: 24px !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+  .product-main-image {
+    margin-left: -24px;
+    margin-right: -24px;
+  }
+
+  .product-main-image img {
+    border-radius: 0 !important;
+  }
+
+    .mobile-product-title {
+    font-size: 42px !important;
+    line-height: 1.05 !important;
+    margin-top: 12px;
+  }
+
+  .mobile-product-price {
+    font-size: 38px !important;
+  }
+
+  .mobile-accordion {
+    margin-top: 20px;
+    border-top: 1px solid rgba(139,58,30,.12);
+  }
+
+    .accordion-item {
+      border-bottom: 1px solid rgba(139,58,30,.08);
+    }
+
+    .accordion-header {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: var(--brown);
+      font-size: 15px;
+    }
+
+    .accordion-content {
+      padding-bottom: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .mobile-sticky-cart {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid rgba(139,58,30,.12);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .mobile-sticky-cart button {
+      min-width: 160px;
+    }
+
+    main {
+      padding-bottom: 90px;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .mobile-sticky-cart {
+      display: none;
+    }
+  }
+`}</style>
       </main>
 <CustomMeasurementModal
   open={showMeasurementModal}
