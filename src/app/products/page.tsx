@@ -87,7 +87,7 @@ export default function ProductsPage({
               }}
             >
               Thoughtfully crafted garments inspired by
-              India's handloom heritage. Timeless,
+              India&#39;s handloom heritage. Timeless,
               breathable and designed for everyday wear.
             </p>
           </div>
