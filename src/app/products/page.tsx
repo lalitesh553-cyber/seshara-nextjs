@@ -78,30 +78,28 @@ export default function ProductsPage({
               {pageTitle}
             </h1>
 
-            <p
-              style={{
-                maxWidth: 700,
-                margin: '0 auto',
-                color: 'var(--muted)',
-                lineHeight: 1.8,
-              }}
-            >
-              Thoughtfully crafted garments inspired by
-              India&#39;s handloom heritage. Timeless,
-              breathable and designed for everyday wear.
-            </p>
-          </div>
+<p
+  style={{
+    maxWidth: 700,
+    margin: '0 auto',
+    color: 'var(--muted)',
+    lineHeight: 1.8,
+  }}
+>
+  {"Thoughtfully crafted garments inspired by India's handloom heritage. Timeless, breathable and designed for everyday wear."}
+</p>
+</div>
 
-          <div
-            className="catalog-grid-5"
-            style={{
-              gap: '1px',
-              background: 'rgba(139,58,30,0.06)',
-            }}
-          >
-            {filteredProducts.map((product) => (
-              <Link
-                key={product.id}
+<div
+  className="catalog-grid-5"
+  style={{
+    gap: '1px',
+    background: 'rgba(139,58,30,0.06)',
+  }}
+>
+  {filteredProducts.map((product) => (
+    <Link
+      key={product.id}
                 href={`/products/${product.slug}`}
                 style={{
                   textDecoration: 'none',
