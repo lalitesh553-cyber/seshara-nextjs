@@ -36,6 +36,25 @@ const [measurements, setMeasurements] =
   useState<CustomMeasurements | null>(null)
 const [openSection, setOpenSection] =
   useState<string | null>(null)
+
+  // Touch swipe state for mobile image gallery
+  const [touchStartX, setTouchStartX] = useState<number | null>(null)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX)
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent, totalImages: number) => {
+    if (touchStartX === null) return
+    const deltaX = touchStartX - e.changedTouches[0].clientX
+    if (Math.abs(deltaX) < 40) return
+    if (deltaX > 0) {
+      setSelectedImage((prev) => (prev + 1) % totalImages)
+    } else {
+      setSelectedImage((prev) => (prev - 1 + totalImages) % totalImages)
+    }
+    setTouchStartX(null)
+  }
   if (!product) {
     notFound()
   }
@@ -144,64 +163,105 @@ if (
             }}
           >
             <div>
+              {/* ── MOBILE: full-width swipeable gallery ── */}
               <div
-  className="product-main-image"
-  style={{
-    background: '#fff',
-    aspectRatio: '3/4',
-    overflow: 'hidden',
-    marginBottom: 16,
-  }}
->
-                <img
-                  src={product.images[selectedImage]}
-                  alt={product.name}
+                className="mobile-swipe-gallery"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={(e) =>
+                  handleTouchEnd(e, product.images.length)
+                }
+              >
+                <div
+                  className="mobile-swipe-track"
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'top center',
-                    display: 'block',
+                    transform: `translateX(-${selectedImage * 100}%)`,
                   }}
-                />
+                >
+                  {product.images.map((image, idx) => (
+                    <div key={idx} className="mobile-swipe-slide">
+                      <img
+                        src={image}
+                        alt={idx === 0 ? product.name : ''}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'top center',
+                          display: 'block',
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {product.images.length > 1 && (
+                  <div className="mobile-swipe-dots">
+                    {product.images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedImage(idx)}
+                        className={idx === selectedImage ? 'dot dot-active' : 'dot'}
+                        aria-label={`Image ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {product.images.length > 1 && (
-  <div
-    style={{
-      display: 'flex',
-      gap: 10,
-      flexWrap: 'wrap',
-    }}
-  >
-    {product.images.map((image, idx) => (
-      <button
-        key={idx}
-        onClick={() => setSelectedImage(idx)}
-        style={{
-          border:
-            selectedImage === idx
-              ? '2px solid var(--terra)'
-              : '1px solid rgba(139,58,30,.15)',
-          padding: 0,
-          background: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        <img
-          src={image}
-          alt=""
-          style={{
-            width: 90,
-            height: 110,
-            objectFit: 'cover',
-            display: 'block',
-          }}
-        />
-      </button>
-    ))}
-  </div>
-)}
+              {/* ── DESKTOP: static main image + thumbnails ── */}
+              <div className="desktop-gallery">
+                <div
+                  style={{
+                    background: '#fff',
+                    aspectRatio: '3/4',
+                    overflow: 'hidden',
+                    marginBottom: 16,
+                  }}
+                >
+                  <img
+                    src={product.images[selectedImage]}
+                    alt={product.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'top center',
+                      display: 'block',
+                    }}
+                  />
+                </div>
+
+                {product.images.length > 1 && (
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    {product.images.map((image, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedImage(idx)}
+                        style={{
+                          border:
+                            selectedImage === idx
+                              ? '2px solid var(--terra)'
+                              : '1px solid rgba(139,58,30,.15)',
+                          padding: 0,
+                          background: 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <img
+                          src={image}
+                          alt=""
+                          style={{
+                            width: 90,
+                            height: 110,
+                            objectFit: 'cover',
+                            display: 'block',
+                          }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>
@@ -489,7 +549,8 @@ if (
               You May Also Like
             </h2>
 
-            <div className="catalog-grid-4 mobile-related-products">
+            {/* ── DESKTOP: 4-col grid ── */}
+            <div className="catalog-grid-4 desktop-related-grid">
               {relatedProducts.map((item) => (
                 <Link
                   key={item.id}
@@ -510,12 +571,7 @@ if (
                       display: 'block',
                     }}
                   />
-
-                  <div
-                    style={{
-                      padding: 16,
-                    }}
-                  >
+                  <div style={{ padding: 16 }}>
                     <h3
                       style={{
                         color: 'var(--brown)',
@@ -525,10 +581,50 @@ if (
                     >
                       {item.name}
                     </h3>
+                    <p style={{ color: 'var(--terra)' }}>
+                      ₹{item.price.toLocaleString('en-IN')}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
 
+            {/* ── MOBILE: horizontal swipe carousel ── */}
+            <div className="mobile-related-carousel">
+              {relatedProducts.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/products/${item.slug}`}
+                  className="mobile-related-card"
+                >
+                  <img
+                    src={item.images[0]}
+                    alt={item.name}
+                    style={{
+                      width: '100%',
+                      aspectRatio: '3/4',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                  <div style={{ padding: '12px 8px' }}>
+                    <h3
+                      style={{
+                        color: 'var(--brown)',
+                        fontWeight: 400,
+                        fontSize: 13,
+                        marginBottom: 6,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {item.name}
+                    </h3>
                     <p
                       style={{
                         color: 'var(--terra)',
+                        fontSize: 14,
+                        fontStyle: 'italic',
+                        fontFamily: 'Cormorant Garamond, serif',
                       }}
                     >
                       ₹{item.price.toLocaleString('en-IN')}
@@ -541,6 +637,7 @@ if (
         </div> 
 
       <style jsx>{`
+  /* ─── 900px breakpoint: collapse grid ─── */
   @media (max-width: 900px) {
     .product-layout {
       grid-template-columns: 1fr !important;
@@ -548,35 +645,84 @@ if (
     }
   }
 
+  /* ─── Desktop: show desktop elements, hide mobile ones ─── */
+  @media (min-width: 769px) {
+    .mobile-swipe-gallery { display: none; }
+    .desktop-gallery { display: block; }
+    .mobile-related-carousel { display: none; }
+    .desktop-related-grid { display: grid; }
+    .mobile-sticky-cart { display: none; }
+  }
+
+  /* ─── Mobile ─── */
   @media (max-width: 768px) {
-  .product-main-image {
-    margin-left: -24px;
-    margin-right: -24px;
-  }
+    .desktop-gallery { display: none; }
 
-  .product-main-image img {
-    border-radius: 0 !important;
-  }
+    /* Swipe gallery */
+    .mobile-swipe-gallery {
+      display: block;
+      position: relative;
+      width: calc(100% + 48px);
+      margin-left: -24px;
+      margin-right: -24px;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      background: #fff;
+      margin-bottom: 20px;
+    }
+    .mobile-swipe-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+    .mobile-swipe-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+    }
+    .mobile-swipe-dots {
+      position: absolute;
+      bottom: 14px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(255,255,255,0.55);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .dot-active {
+      background: #fff;
+      transform: scale(1.25);
+    }
 
+    /* Typography */
     .mobile-product-title {
-    font-size: 42px !important;
-    line-height: 1.05 !important;
-    margin-top: 12px;
-  }
+      font-size: 36px !important;
+      line-height: 1.05 !important;
+      margin-top: 4px;
+    }
+    .mobile-product-price {
+      font-size: 34px !important;
+    }
 
-  .mobile-product-price {
-    font-size: 38px !important;
-  }
-
-  .mobile-accordion {
-    margin-top: 20px;
-    border-top: 1px solid rgba(139,58,30,.12);
-  }
-
+    /* Accordion */
+    .mobile-accordion {
+      margin-top: 20px;
+      border-top: 1px solid rgba(139,58,30,.12);
+    }
     .accordion-item {
       border-bottom: 1px solid rgba(139,58,30,.08);
     }
-
     .accordion-header {
       width: 100%;
       background: none;
@@ -589,7 +735,6 @@ if (
       color: var(--brown);
       font-size: 15px;
     }
-
     .accordion-content {
       padding-bottom: 18px;
       color: var(--muted);
@@ -597,6 +742,28 @@ if (
       font-size: 14px;
     }
 
+    /* Related products carousel */
+    .desktop-related-grid { display: none !important; }
+    .mobile-related-carousel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .mobile-related-carousel::-webkit-scrollbar { display: none; }
+    .mobile-related-card {
+      flex: 0 0 52vw;
+      max-width: 220px;
+      scroll-snap-align: start;
+      text-decoration: none;
+      background: #fff;
+      display: block;
+    }
+
+    /* Sticky cart */
     .mobile-sticky-cart {
       position: fixed;
       bottom: 0;
@@ -610,20 +777,8 @@ if (
       align-items: center;
       z-index: 9999;
     }
-
-    .mobile-sticky-cart button {
-      min-width: 160px;
-    }
-
-    main {
-      padding-bottom: 90px;
-    }
-  }
-
-  @media (min-width: 769px) {
-    .mobile-sticky-cart {
-      display: none;
-    }
+    .mobile-sticky-cart button { min-width: 160px; }
+    main { padding-bottom: 90px; }
   }
 `}</style>
       </main>
