@@ -1,112 +1,251 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@500;600;700&display=swap');
 
+/* ══════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════ */
 :root {
-  --terra: #8b3a1e;
-  --brown: #3d1f0f;
+  --terra:  #8b3a1e;
+  --brown:  #3d1f0f;
   --brown2: #5c3620;
-  --muted: #8a7060;
-  --cream: #f5f0e8;
-  --warm: #faf7f2;
+  --muted:  #8a7060;
+  --cream:  #f5f0e8;
+  --warm:   #faf7f2;
 }
 
+/* ══════════════════════════════════
+   RESET
+══════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body { background: var(--cream); overflow-x: hidden; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+html  { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body  {
+  background: var(--cream);
+  overflow-x: hidden;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* ── MARQUEE ── */
-.ann-track { display: flex; width: max-content; animation: marquee 30s linear infinite; white-space: nowrap; }
-@keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+/* ══════════════════════════════════
+   ANNOUNCEMENT BAR MARQUEE
+══════════════════════════════════ */
+.ann-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+  white-space: nowrap;
+}
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
-/* ══ HERO ══ */
-.hero-strip-wrapper { width: 100%; overflow: hidden; background: var(--cream); position: relative; }
-.hero-strip { display: flex; width: max-content; animation: heroScroll 36s linear infinite; margin-bottom: -4px; }
-@keyframes heroScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-
-.hero-card { flex-shrink: 0; width: clamp(240px,25vw,400px); height: clamp(440px,78vh,720px); position: relative; background: var(--cream); }
-.hero-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; display: block; }
-.hero-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(46,26,14,0.5) 0%,rgba(46,26,14,0.03) 38%,transparent 58%); pointer-events: none; z-index: 1; }
-.hero-card-top { position: absolute; top: 14px; left: 12px; z-index: 2; font-family: 'Dancing Script',cursive; font-size: 11px; color: rgba(80,40,20,0.38); line-height: 1.4; }
-.hero-card-text { position: absolute; bottom: 22px; left: 14px; right: 14px; z-index: 2; }
-.hero-card-text .title { font-family: 'Dancing Script',cursive; font-size: clamp(14px,1.7vw,22px); color: rgba(255,255,255,0.92); line-height: 1.2; margin-bottom: 4px; white-space: pre-line; }
-.hero-card-text .sub { font-family: 'DM Sans',sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 500; }
-
-/* ══ MOBILE HERO — snap scroll carousel ══ */
-.hero-strip-wrapper.mobile-mode { overflow-x: scroll; overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; scrollbar-width: none; }
-.hero-strip-wrapper.mobile-mode::-webkit-scrollbar { display: none; }
-.hero-strip-wrapper.mobile-mode .hero-strip { animation: none !important; width: auto !important; margin-bottom: 0; }
-.hero-strip-wrapper.mobile-mode .hero-card { width: 100vw !important; height: 72vw !important; min-height: 260px; max-height: 380px; scroll-snap-align: start; flex-shrink: 0; }
-.hero-strip-wrapper.mobile-mode .hero-card img { object-fit: cover !important; object-position: top center !important; }
-
-/* ══ CATALOG ══ */
-.catalog-grid-5 { display: grid; grid-template-columns: repeat(5,1fr); width: 100%; }
-.catalog-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); width: 100%; }
-
-/* ══ MOBILE CATALOG — horizontal swipe, qahla style ══ */
-.catalog-scroll-wrapper {
+/* ══════════════════════════════════
+   HERO STRIP  (homepage only)
+══════════════════════════════════ */
+.hero-strip-wrapper {
   width: 100%;
-  overflow-x: scroll;
-  overflow-y: hidden;
+  overflow: hidden;
+  background: var(--cream);
+  position: relative;
+}
+.hero-strip {
+  display: flex;
+  width: max-content;
+  animation: heroScroll 36s linear infinite;
+  margin-bottom: -4px;
+}
+@keyframes heroScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.hero-card {
+  flex-shrink: 0;
+  width: clamp(240px, 25vw, 400px);
+  height: clamp(440px, 78vh, 720px);
+  position: relative;
+  background: var(--cream);
+}
+.hero-card img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain; object-position: center bottom;
+  display: block;
+}
+.hero-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(46,26,14,0.5) 0%,
+    rgba(46,26,14,0.03) 38%,
+    transparent 58%
+  );
+  pointer-events: none; z-index: 1;
+}
+.hero-card-top {
+  position: absolute; top: 14px; left: 12px; z-index: 2;
+  font-family: 'Dancing Script', cursive; font-size: 11px;
+  color: rgba(80,40,20,0.38); line-height: 1.4;
+}
+.hero-card-text {
+  position: absolute; bottom: 22px; left: 14px; right: 14px; z-index: 2;
+}
+.hero-card-text .title {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(14px, 1.7vw, 22px);
+  color: rgba(255,255,255,0.92);
+  line-height: 1.2; margin-bottom: 4px; white-space: pre-line;
+}
+.hero-card-text .sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); font-weight: 500;
+}
+
+/* ══════════════════════════════════
+   MOBILE HERO  (homepage only)
+   Snap-scroll carousel mode
+══════════════════════════════════ */
+.hero-strip-wrapper.mobile-mode {
+  overflow-x: scroll; overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  cursor: grab;
+}
+.hero-strip-wrapper.mobile-mode::-webkit-scrollbar { display: none; }
+.hero-strip-wrapper.mobile-mode .hero-strip {
+  animation: none !important; width: auto !important; margin-bottom: 0;
+}
+.hero-strip-wrapper.mobile-mode .hero-card {
+  width: 100vw !important; height: 72vw !important;
+  min-height: 260px; max-height: 380px;
+  scroll-snap-align: start; flex-shrink: 0;
+}
+.hero-strip-wrapper.mobile-mode .hero-card img {
+  object-fit: cover !important; object-position: top center !important;
+}
+
+/* ══════════════════════════════════
+   HOMEPAGE CATALOG GRIDS
+   These class names are ONLY used on
+   the homepage CatalogSection component.
+   The /products listing page uses its own
+   independent class names (see below).
+══════════════════════════════════ */
+.catalog-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+}
+.catalog-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+}
+
+/* Homepage horizontal swipe catalog (mobile replacement) */
+.catalog-scroll-wrapper {
+  width: 100%;
+  overflow-x: scroll; overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; cursor: grab;
 }
 .catalog-scroll-wrapper::-webkit-scrollbar { display: none; }
 .catalog-scroll-wrapper:active { cursor: grabbing; }
-.catalog-scroll-inner {
-  display: flex;
-  flex-direction: row;
-  width: max-content;
-}
-.catalog-scroll-item {
-  flex-shrink: 0;
-  width: 58vw;
-  scroll-snap-align: start;
+.catalog-scroll-inner { display: flex; flex-direction: row; width: max-content; }
+.catalog-scroll-item  { flex-shrink: 0; width: 58vw; scroll-snap-align: start; }
+
+/* ══════════════════════════════════
+   /products PAGE GRID
+   Completely separate class names.
+   Never touched by the homepage
+   display:none rule below.
+══════════════════════════════════ */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  gap: 1px;
+  background: rgba(139,58,30,0.06);
 }
 
-/* ── Nav links ── */
-.nav-link { font-family: 'DM Sans',sans-serif; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--brown2); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+/* ══════════════════════════════════
+   NAV LINKS
+══════════════════════════════════ */
+.nav-link {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--brown2);
+  text-decoration: none; font-weight: 500; transition: color 0.2s;
+}
 .nav-link:hover { color: var(--terra); }
 
-/* ── Misc ── */
-.catalog-section-link { font-family: 'DM Sans',sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--brown2); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+/* ══════════════════════════════════
+   MISC UTILITIES
+══════════════════════════════════ */
+.catalog-section-link {
+  font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--brown2); font-weight: 600;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+}
 .catalog-section-link::after { content: '->'; }
-.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease,transform 0.7s ease; }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 .scroll-line { animation: pulse 1.8s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
-@keyframes spin { to{transform:rotate(360deg)} }
-@keyframes slideProgress { from{width:0%}to{width:100%} }
-@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)} }
+
+@keyframes pulse        { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes spin         { to{transform:rotate(360deg)} }
+@keyframes slideProgress{ from{width:0%} to{width:100%} }
+@keyframes livePulse    { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
 
 /* ══════════════════════════════════
-   TABLET 768–1024px
+   TABLET  768–1024px
 ══════════════════════════════════ */
-@media (max-width:1024px) {
-  .hero-card { width: 32vw; height: 52vw; }
-  .catalog-grid-5 { grid-template-columns: repeat(3,1fr); }
-  .catalog-grid-4 { grid-template-columns: repeat(2,1fr); }
+@media (max-width: 1024px) {
+  .hero-card       { width: 32vw; height: 52vw; }
+  .catalog-grid-5  { grid-template-columns: repeat(3, 1fr); }
+  .catalog-grid-4  { grid-template-columns: repeat(2, 1fr); }
+  .products-grid   { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* ══════════════════════════════════
-   MOBILE ≤768px
+   MOBILE  ≤768px
 ══════════════════════════════════ */
-@media (max-width:768px) {
-  /* Announcement */
-  .ann-track span { font-size: 9px !important; letter-spacing: 1.5px !important; margin-right: 24px !important; }
-  /* Desktop catalog grids — hidden on mobile, replaced by scroll */
-  .catalog-grid-5, .catalog-grid-4 { display: none !important; }
+@media (max-width: 768px) {
+  /* Announcement bar text */
+  .ann-track span {
+    font-size: 9px !important;
+    letter-spacing: 1.5px !important;
+    margin-right: 24px !important;
+  }
+
+  /*
+    Hide HOMEPAGE catalog grids only.
+    The homepage CatalogSection uses
+    .catalog-scroll-wrapper instead.
+    NOTE: .products-grid is NOT listed here —
+    it stays visible and becomes 2-col below.
+  */
+  .catalog-grid-5,
+  .catalog-grid-4 {
+    display: none !important;
+  }
+
+  /* /products listing: 2-column grid */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Misc */
   .catalog-section-link { font-size: 10px; letter-spacing: 2px; }
-  /* Magic section — stack vertically */
-  .magic-grid { grid-template-columns: 1fr !important; }
-  /* Footer grid */
+  .magic-grid  { grid-template-columns: 1fr !important; }
   .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
 }
 
 /* ══════════════════════════════════
-   SMALL PHONES ≤480px
+   SMALL PHONES  ≤480px
 ══════════════════════════════════ */
-@media (max-width:480px) {
+@media (max-width: 480px) {
   .catalog-scroll-item { width: 72vw; }
   .footer-grid { grid-template-columns: 1fr !important; }
 }
