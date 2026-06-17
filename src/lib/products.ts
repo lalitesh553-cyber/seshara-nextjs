@@ -94,6 +94,22 @@ export const products: Product[] = [
       '/catalogue-5-2.jpeg',
     ],
   },
+
+  {
+    id: 999,
+    slug: 'test-womens-product',
+    name: 'Test Women Product',
+    tag: 'Testing · Checkout Flow',
+    description:
+      'Temporary ₹1 product for testing cart, checkout, payment and order flow.',
+    category: 'women',
+    price: 1,
+    badge: 'TEST',
+    images: [
+      '/catalogue-5.jpeg',
+      '/catalogue-5-1.jpeg',
+    ],
+  },
 ]
 
 export function getProductBySlug(slug: string) {
