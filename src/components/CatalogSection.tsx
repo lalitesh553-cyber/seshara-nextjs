@@ -311,21 +311,6 @@ export default function CatalogSection() {
             Collection 2026
           </p>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 16 }}>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 7,
-              fontSize: 10, letterSpacing: 2, textTransform: 'uppercase',
-              fontWeight: 600, color: 'var(--brown2)',
-              border: '1.5px solid var(--brown2)', padding: '5px 14px',
-            }}>
-              <span style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: '#c0392b', display: 'inline-block',
-                animation: 'livePulse 1.6s ease-in-out infinite',
-              }} />
-              Summer Collection Now Live ♡
-            </span>
-          </div>
 
           <h2 style={{
             fontFamily: 'Playfair Display, serif',

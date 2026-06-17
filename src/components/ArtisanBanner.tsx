@@ -60,30 +60,7 @@ export default function ArtisanBanner() {
             padding: 'clamp(24px,6vw,96px)',
           }}
         >
-          <p
-            style={{
-              fontFamily: 'var(--sans)',
-              fontSize: 10,
-              letterSpacing: 4,
-              textTransform: 'uppercase',
-              color: 'rgba(201,169,110,0.55)',
-              fontWeight: 500,
-              marginBottom: 20,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-            }}
-          >
-            <span
-              style={{
-                display: 'inline-block',
-                width: 28,
-                height: 1,
-                background: 'rgba(201,169,110,0.4)',
-              }}
-            />
-            SS 2026 — The Everyday Collection
-          </p>
+
 
           <h2
             style={{
