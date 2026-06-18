@@ -1,4 +1,8 @@
 // src/components/Navbar.tsx
+// Fixed below AnnouncementBar: top:32px, height:72px.
+// zIndex:1000 (AnnouncementBar is 1001, above this).
+// Mobile drawer: solid background, spacer pushes links below header.
+
 'use client'
 
 import Link from 'next/link'
@@ -14,10 +18,10 @@ const NAV_ITEMS = [
   { label: 'Design Yours', href: '/design-yours' },
 ]
 
-// AnnouncementBar height = 32px, nav bar height = 72px
-const ANNOUNCEMENT_H = 32
-const NAV_H = 72
-const HEADER_TOTAL = ANNOUNCEMENT_H + NAV_H // 104px
+// Header geometry — must match AnnouncementBar and spacer in page.tsx
+const ANNOUNCEMENT_H = 32  // AnnouncementBar height
+const NAV_H          = 72  // Nav bar height
+const HEADER_TOTAL   = ANNOUNCEMENT_H + NAV_H  // 104px
 
 export default function Navbar() {
   const { count } = useCart()
@@ -28,14 +32,13 @@ export default function Navbar() {
     <>
       <AnnouncementBar />
 
-      {/* ── Fixed nav bar ── */}
       <header
         style={{
           position: 'fixed',
-          top: ANNOUNCEMENT_H,
+          top: ANNOUNCEMENT_H,   // sits flush below announcement bar
           left: 0,
           right: 0,
-          zIndex: 1000,
+          zIndex: 1000,          // below AnnouncementBar (1001)
         }}
       >
         <nav
@@ -47,29 +50,27 @@ export default function Navbar() {
             padding: '0 clamp(16px, 4vw, 52px)',
             background: 'rgba(245,240,232,0.97)',
             backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
             borderBottom: '1px solid rgba(139,58,30,0.08)',
           }}
         >
           {/* LEFT */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* Hamburger — inline style shows flex, overrides display:none via className trick */}
+
+            {/* Hamburger — CSS shows flex on mobile */}
             <button
               className="seshara-hamburger"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: 6,
-                display: 'none', // CSS overrides to flex on mobile
-                flexDirection: 'column',
-                gap: 5,
-                alignItems: 'center',
-                justifyContent: 'center',
+                background: 'none', border: 'none',
+                cursor: 'pointer', padding: 6,
+                display: 'none',  // overridden to flex at ≤768px
+                flexDirection: 'column', gap: 5,
+                alignItems: 'center', justifyContent: 'center',
               }}
             >
-              {/* Animated lines: become X when open */}
+              {/* Animated burger → X */}
               <span style={{
                 display: 'block', width: 24, height: 1.5,
                 background: 'var(--brown2)',
@@ -92,16 +93,13 @@ export default function Navbar() {
               }} />
             </button>
 
-            {/* Desktop nav links */}
+            {/* Desktop nav */}
             <ul
               className="seshara-desktop-nav"
               style={{
-                display: 'flex',
-                gap: 28,
-                listStyle: 'none',
-                alignItems: 'center',
-                margin: 0,
-                padding: 0,
+                display: 'flex', gap: 28,
+                listStyle: 'none', alignItems: 'center',
+                margin: 0, padding: 0,
               }}
             >
               {NAV_ITEMS.map((item) => (
@@ -142,31 +140,20 @@ export default function Navbar() {
             <button
               onClick={() => setCartOpen(true)}
               style={{
-                background: 'var(--terra)',
-                color: '#fff',
-                padding: '8px 16px',
-                borderRadius: 2,
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                fontSize: 10,
-                letterSpacing: 2,
-                textTransform: 'uppercase',
+                background: 'var(--terra)', color: '#fff',
+                padding: '8px 16px', borderRadius: 2,
+                border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 6,
+                fontSize: 10, letterSpacing: 2, textTransform: 'uppercase',
               }}
             >
               Cart
               {count > 0 && (
                 <span style={{
-                  background: '#fff',
-                  color: 'var(--terra)',
-                  width: 16, height: 16,
-                  borderRadius: '50%',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 9, fontWeight: 700,
+                  background: '#fff', color: 'var(--terra)',
+                  width: 16, height: 16, borderRadius: '50%',
+                  display: 'inline-flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: 9, fontWeight: 700,
                 }}>
                   {count}
                 </span>
@@ -177,42 +164,44 @@ export default function Navbar() {
       </header>
 
       {/*
-        ══════════════════════════════════════════
         MOBILE DRAWER
-        ══════════════════════════════════════════
-        KEY FIX: The drawer starts at top:0 (covers entire screen including
-        announcement bar). The first child is a SPACER of exactly HEADER_TOTAL
-        height (104px) so nav links start BELOW the fixed header bar —
-        they are never clipped. The header sits on top (z-index 1000)
-        while the drawer is z-index 999.
+        ─────────────────────────────────────────────────────────────
+        Renders outside <header> — covers full viewport including
+        the announcement bar area.
 
-        This means "ALL PRODUCTS" is fully visible directly under the nav bar,
-        not hidden behind it.
+        z-index stack:
+          backdrop:          998
+          drawer:            999
+          header (nav):     1000
+          announcement bar: 1001
+
+        SPACER FIX:
+          The drawer starts at top:0 but the header takes 104px.
+          A spacer div (height: HEADER_TOTAL = 104px) is the first
+          child of the drawer — this pushes "ALL PRODUCTS" to start
+          exactly below the visible nav bar. No clipping.
       */}
       {menuOpen && (
         <>
-          {/* Invisible backdrop — click to close */}
+          {/* Backdrop */}
           <div
             aria-hidden="true"
             onClick={() => setMenuOpen(false)}
             style={{
-              position: 'fixed',
-              inset: 0,
+              position: 'fixed', inset: 0,
+              background: 'rgba(0,0,0,0.3)',
               zIndex: 998,
             }}
           />
 
-          {/* Full screen drawer */}
+          {/* Drawer */}
           <div
             role="dialog"
             aria-modal="true"
             aria-label="Navigation"
             style={{
               position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
+              top: 0, left: 0, right: 0, bottom: 0,
               background: '#faf7f2',
               zIndex: 999,
               display: 'flex',
@@ -220,13 +209,10 @@ export default function Navbar() {
               overflowY: 'auto',
             }}
           >
-            {/*
-              Spacer: exactly as tall as announcement bar + nav bar.
-              This pushes links below the visible fixed header.
-            */}
+            {/* Spacer: pushes links below fixed header */}
             <div style={{ height: HEADER_TOTAL, flexShrink: 0 }} />
 
-            {/* Divider line at top of links */}
+            {/* Top divider */}
             <div style={{ height: 1, background: 'rgba(139,58,30,0.1)', flexShrink: 0 }} />
 
             {/* Nav links */}
@@ -260,12 +246,10 @@ export default function Navbar() {
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
 
       <style jsx>{`
-        /* Mobile: show hamburger, hide desktop nav */
         @media (max-width: 768px) {
           .seshara-desktop-nav { display: none !important; }
           .seshara-hamburger   { display: flex !important; }
         }
-        /* Desktop: ensure hamburger stays hidden */
         @media (min-width: 769px) {
           .seshara-hamburger { display: none !important; }
         }
