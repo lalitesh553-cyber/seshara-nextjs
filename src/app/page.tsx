@@ -14,16 +14,15 @@ import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
-    <main style={{ margin: 0, padding: 0 }}>
-      <Navbar />
+    <main style={{ margin: 0, padding: 0, paddingTop: 104 }}>
       {/*
-        Fixed header stack:
-          AnnouncementBar: position:fixed top:0    height:32px
-          Navbar:          position:fixed top:32px height:72px
-          Total:           104px
-        This spacer prevents HeroStrip from sitting under the header.
+        paddingTop:104 = 32px (AnnouncementBar) + 72px (Navbar).
+        Using paddingTop on main instead of a separate spacer <div>
+        eliminates the BFC boundary gap that appeared between the div
+        and HeroStrip on all three platforms (desktop/iPad/mobile).
+        padding is part of main's own box model — no sibling boundary.
       */}
-      <div style={{ height: 104 }} />
+      <Navbar />
       <HeroStrip />
       <ArtisanBanner />
       <CatalogSection />

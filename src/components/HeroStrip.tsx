@@ -62,10 +62,10 @@ export default function HeroStrip() {
         width: '100%',
         overflow: 'hidden',
         background: 'var(--cream)',
-        // contain isolates layout so section never affects sibling positions
-        contain: 'layout paint',
-        lineHeight: 0,
-        fontSize: 0,
+        display: 'block',
+        // No contain here — it created a new BFC that caused
+        // a gap between the spacer div and this section on all browsers.
+        // No lineHeight/fontSize:0 — these caused implicit spacing too.
       }}
     >
       {/* ── TRACK ── */}
@@ -176,7 +176,6 @@ export default function HeroStrip() {
           position: relative;
           overflow: hidden;
           background: var(--cream);
-          contain: layout paint style;
           /* Desktop */
           width: clamp(260px, 22vw, 380px);
           aspect-ratio: 2 / 3;
