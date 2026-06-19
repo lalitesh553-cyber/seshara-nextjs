@@ -63,6 +63,11 @@ export default function HeroStrip() {
         overflow: 'hidden',
         background: 'var(--cream)',
         display: 'block',
+        // marginTop = fixed header height (announcement + nav).
+        // This is the SINGLE place the offset is applied — no spacer
+        // <div>, no paddingTop on <main>. --header-h is defined once
+        // in globals.css :root. Change it there, every page updates.
+        marginTop: 'var(--header-h)',
         // No contain here — it created a new BFC that caused
         // a gap between the spacer div and this section on all browsers.
         // No lineHeight/fontSize:0 — these caused implicit spacing too.

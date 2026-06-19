@@ -1,6 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@500;600;700&display=swap');
 
 /* ══════════════════════════════════
+   HEADER HEIGHT TOKENS
+   Single source of truth.
+   All components reference these.
+   Change here → updates everywhere.
+══════════════════════════════════ */
+:root {
+  --ann-h:    32px;   /* AnnouncementBar fixed height */
+  --nav-h:    72px;   /* Navbar fixed height */
+  --header-h: 104px;  /* total = --ann-h + --nav-h */
+}
+
+/* ══════════════════════════════════
    DESIGN TOKENS
 ══════════════════════════════════ */
 :root {
@@ -26,8 +38,6 @@ body  {
 
 /* ══════════════════════════════════
    ANNOUNCEMENT BAR MARQUEE
-   2-set track: [A][B] animated -50%
-   Identical architecture to HeroStrip.
 ══════════════════════════════════ */
 .ann-track {
   display: flex;
@@ -44,10 +54,7 @@ body  {
 }
 
 /* ══════════════════════════════════
-   HOMEPAGE CATALOG GRIDS
-   Only used by CatalogSection (desktop).
-   Hidden on mobile — CatalogSection renders
-   its own inline-style mobile carousel.
+   CATALOG GRIDS — homepage only
 ══════════════════════════════════ */
 .catalog-grid-5 {
   display: grid;
@@ -62,7 +69,7 @@ body  {
 
 /* ══════════════════════════════════
    /products PAGE GRID
-   Separate class — never hidden on mobile.
+   Never hidden on mobile.
 ══════════════════════════════════ */
 .products-grid {
   display: grid;
@@ -120,19 +127,13 @@ body  {
     letter-spacing: 1.5px !important;
     margin-right: 24px !important;
   }
-
-  /* Homepage catalog grids — hidden on mobile.
-     CatalogSection renders its own inline mobile carousel.
-     .products-grid NOT listed — stays visible, becomes 2-col. */
   .catalog-grid-5,
   .catalog-grid-4 {
     display: none !important;
   }
-
   .products-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
-
   .catalog-section-link { font-size: 10px; letter-spacing: 2px; }
   .magic-grid  { grid-template-columns: 1fr !important; }
   .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
@@ -149,7 +150,5 @@ body  {
    REDUCED MOTION
 ══════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
-  .ann-track {
-    animation-play-state: paused;
-  }
+  .ann-track { animation-play-state: paused; }
 }

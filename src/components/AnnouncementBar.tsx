@@ -1,8 +1,9 @@
 // src/components/AnnouncementBar.tsx
-// Fixed at top:0, zIndex:1001 (above Navbar's 1000).
-// Uses same 2-set marquee architecture as HeroStrip:
-// [Set A][Set B] animated by CSS translate3d(-50%,0,0).
-// ann-scroll keyframe defined in globals.css.
+//
+// Height is EXACTLY --ann-h = 32px from globals.css.
+// No padding that could change the rendered height unexpectedly.
+// Uses line-height to vertically center text instead of padding,
+// so height is a guaranteed fixed value.
 
 'use client'
 
@@ -14,30 +15,26 @@ const messages = [
 ]
 
 export default function AnnouncementBar() {
-  // Height of this bar = 32px (padding 8px top + 8px bottom + ~16px content).
-  // Navbar is positioned top:32px to sit flush below this.
   return (
     <div
       style={{
         background: 'var(--terra)',
         overflow: 'hidden',
-        padding: '8px 0',
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
-        // One above Navbar (1000) so it's never covered
         zIndex: 1001,
-        height: 32,
+        // Height is FIXED = --ann-h = 32px.
+        // Using height + lineHeight (not padding) to guarantee
+        // this element is always exactly 32px on every device.
+        // padding-based height is unpredictable across browsers.
+        height: 'var(--ann-h)',
+        lineHeight: 'var(--ann-h)',
         display: 'flex',
         alignItems: 'center',
       }}
     >
-      {/*
-        2-set track: [Set A][Set B].
-        CSS animation in globals.css: ann-scroll → translate3d(-50%,0,0).
-        -50% of 2 sets = exactly 1 set. Seamless loop.
-      */}
       <div className="ann-track">
         {/* Set A */}
         {messages.map((msg, i) => (
@@ -51,12 +48,13 @@ export default function AnnouncementBar() {
               fontFamily: 'DM Sans, sans-serif',
               marginRight: '56px',
               whiteSpace: 'nowrap',
+              lineHeight: 1,
             }}
           >
-            {msg} &nbsp;·
+            {msg}&nbsp;·
           </span>
         ))}
-        {/* Set B — identical, creates the seamless loop */}
+        {/* Set B — seamless loop */}
         {messages.map((msg, i) => (
           <span
             key={`b-${i}`}
@@ -68,9 +66,10 @@ export default function AnnouncementBar() {
               fontFamily: 'DM Sans, sans-serif',
               marginRight: '56px',
               whiteSpace: 'nowrap',
+              lineHeight: 1,
             }}
           >
-            {msg} &nbsp;·
+            {msg}&nbsp;·
           </span>
         ))}
       </div>
