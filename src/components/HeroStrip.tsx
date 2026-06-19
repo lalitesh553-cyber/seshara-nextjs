@@ -60,17 +60,25 @@ export default function HeroStrip() {
       style={{
         position: 'relative',
         width: '100%',
+        // overflow:hidden here does two jobs:
+        //   1. clips the marquee track (always needed)
+        //   2. forces this element to establish its own Block
+        //      Formatting Context (BFC). A BFC guarantees this
+        //      element's top/bottom margins can NEVER collapse
+        //      with a parent or sibling. This is the actual fix —
+        //      marginTop alone does NOT create a BFC and was
+        //      silently collapsing in some browsers, which is why
+        //      the gap kept appearing inconsistently.
         overflow: 'hidden',
         background: 'var(--cream)',
         display: 'block',
-        // marginTop = fixed header height (announcement + nav).
-        // This is the SINGLE place the offset is applied — no spacer
-        // <div>, no paddingTop on <main>. --header-h is defined once
-        // in globals.css :root. Change it there, every page updates.
-        marginTop: 'var(--header-h)',
-        // No contain here — it created a new BFC that caused
-        // a gap between the spacer div and this section on all browsers.
-        // No lineHeight/fontSize:0 — these caused implicit spacing too.
+        // paddingTop instead of marginTop: padding can NEVER
+        // collapse with anything, by spec, full stop. This is the
+        // only 100%-guaranteed way to reserve space for the fixed
+        // header without relying on BFC behavior at all.
+        paddingTop: 'var(--header-h)',
+        // boxSizing ensures paddingTop doesn't add to width calc issues
+        boxSizing: 'border-box',
       }}
     >
       {/* ── TRACK ── */}
