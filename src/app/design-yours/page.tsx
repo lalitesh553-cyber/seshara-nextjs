@@ -15,7 +15,7 @@ export default function DesignYours() {
   }
 
   const tools = [
-    { icon: '◻', label: 'IDENTITY', isCustom: false },
+    { icon: '/sunflower.png', label: 'IDENTITY', isCustom: true }, // Custom colorful sunflower icon
     { icon: '✎', label: 'STYLE', isCustom: false },
     { icon: '◎', label: 'AURA', isCustom: false },
     { icon: '⊕', label: 'FOCUS', isCustom: false },
@@ -25,7 +25,7 @@ export default function DesignYours() {
     { icon: '⟋', label: 'PATH', isCustom: false },
     { icon: '▭', label: 'FRAME', isCustom: false },
     { icon: '◯', label: 'SHAPE', isCustom: false },
-    { icon: '/sunflower.png', label: 'ENERGY', isCustom: true }, // Custom colorful sunflower icon
+    { icon: '◻', label: 'ENERGY', isCustom: false },
   ]
 
   return (
